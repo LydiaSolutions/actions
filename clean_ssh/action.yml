@@ -1,0 +1,15 @@
+name: 'Pull Private Repository'
+description: 'Setup our runner to pull private repository'
+inputs:
+  keyfile:
+    description: 'path where the keyfile is stored'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - id: delete-key
+      run: rm -rf ${{ inputs.keyfile }}
+      shell: bash
+    - id: delete-config
+      run: rm -rf ~/.ssh/config.d/*
+      shell: bash

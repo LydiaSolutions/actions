@@ -1,0 +1,26 @@
+name: 'Pull Private Repository'
+description: 'Setup our runner to pull private repository'
+inputs:
+  ssh-key:
+    description: 'Base64 encoded string containing the private ssh key to use to pull repositories'
+    required: true
+outputs:
+  keyfile:
+    description: "Keyfile create to hold the key"
+    value: ${{ steps.genconfig.outputs.keyfile }}
+runs:
+  using: "composite"
+  steps:
+    - id: genconfig
+      run: |
+        KEYFILE=$(mktemp)
+        echo ${{ inputs.ssh-key }} | base64 -d > $KEYFILE
+        chmod 600 $KEYFILE
+        echo -e "Host github.com\n"\
+          " IdentityFile $KEYFILE\n"\
+          " IdentitiesOnly yes\n"\
+          " UserKnownHostsFile=/dev/null\n"\
+          " StrictHostKeyChecking no"\
+        > ~/.ssh/config.d/customconfig
+        echo "::set-output name=keyfile::$(echo $KEYFILE)"
+      shell: bash
