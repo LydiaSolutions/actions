@@ -16,6 +16,7 @@ runs:
         KEYFILE=$(mktemp)
         echo ${{ inputs.ssh-key }} | base64 -d > $KEYFILE
         chmod 600 $KEYFILE
+        mkdir -p ~/.ssh/config.d/
         echo -e "Host github.com\n"\
           " IdentityFile $KEYFILE\n"\
           " IdentitiesOnly yes\n"\
